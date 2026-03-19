@@ -1,3 +1,30 @@
 spring:
   application:
-    name: campus
+    name: campus_buddy_matching_system
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/campus_buddy_matching_system?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: 200607191i
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    # Enable SQL logging
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    '[org.springframework.web]': DEBUG
+    '[org.hibernate.SQL]': DEBUG
+    '[org.hibernate.type.descriptor.sql.BasicBinder]': TRACE
+
