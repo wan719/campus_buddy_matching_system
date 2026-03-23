@@ -4,7 +4,7 @@
 本项目旨在帮助在校大学生找到学习、运动、吃饭等"搭子"，建立真实的校园社交连接。
 
 ## 技术栈
-- Spring Boot 3.x
+- Spring Boot 4.04
 - Spring Security + JWT
 - MyBatis
 - MySQL 8.0
