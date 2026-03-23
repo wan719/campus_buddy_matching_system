@@ -1,0 +1,41 @@
+@startuml 校园搭子匹配系统 - 用例图
+title 校园搭子匹配系统 - 用例图
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor "学生" as Student
+actor "管理员" as Admin
+
+rectangle "校园搭子匹配系统" {
+  usecase "用户注册" as UC01
+  usecase "用户登录" as UC02
+  usecase "发布活动" as UC03
+  usecase "浏览/搜索活动" as UC04
+  usecase "申请加入活动" as UC05
+  usecase "审核申请" as UC06
+  usecase "评价参与者" as UC07
+  usecase "查看信用分" as UC08
+  usecase "管理我的活动" as UC09
+  usecase "处理举报" as UC10
+  usecase "用户管理" as UC11
+  usecase "内容审核" as UC12
+}
+
+Student --> UC01
+Student --> UC02
+Student --> UC03
+Student --> UC04
+Student --> UC05
+Student --> UC06
+Student --> UC07
+Student --> UC08
+Student --> UC09
+
+Admin --> UC10
+Admin --> UC11
+Admin --> UC12
+
+UC06 .> UC03 : <<extend>>
+UC07 .> UC05 : <<extend>>
+@enduml
