@@ -1,0 +1,67 @@
+@startuml
+!define Table(name,desc) class name as "desc" << (T,#FFAAAA) >>
+
+Table(user, "用户表") {
+  id : BIGINT <<PK>>
+  student_id : VARCHAR(20) <<UK>>
+  password_hash : VARCHAR(60)
+  nickname : VARCHAR(50)
+  avatar_url : VARCHAR(255)
+  college : VARCHAR(100)
+  grade : INT
+  tags : JSON
+  credit_score : INT
+  is_active : BOOLEAN
+  created_at : TIMESTAMP
+}
+
+Table(activity, "活动表") {
+  id : BIGINT <<PK>>
+  creator_id : BIGINT <<FK>>
+  category : VARCHAR(20)
+  title : VARCHAR(100)
+  detail : TEXT
+  location : VARCHAR(100)
+  appointment_time : DATETIME
+  max_members : INT
+  current_members : INT
+  status : VARCHAR(20)
+  created_at : TIMESTAMP
+}
+
+Table(team_member, "队伍成员表") {
+  id : BIGINT <<PK>>
+  activity_id : BIGINT <<FK>>
+  user_id : BIGINT <<FK>>
+  role : VARCHAR(20)
+  joined_at : TIMESTAMP
+}
+
+Table(application, "申请表") {
+  id : BIGINT <<PK>>
+  activity_id : BIGINT <<FK>>
+  applicant_id : BIGINT <<FK>>
+  status : VARCHAR(20)
+  apply_msg : VARCHAR(255)
+  processed_at : TIMESTAMP
+  created_at : TIMESTAMP
+}
+
+Table(review, "评价表") {
+  id : BIGINT <<PK>>
+  from_user_id : BIGINT <<FK>>
+  to_user_id : BIGINT <<FK>>
+  activity_id : BIGINT <<FK>>
+  rating : TINYINT
+  comment : VARCHAR(255)
+  created_at : TIMESTAMP
+}
+
+user ||--o{ activity : "创建"
+user ||--o{ team_member : "加入"
+user ||--o{ application : "申请"
+user ||--o{ review : "评价"
+activity ||--o{ team_member : "包含"
+activity ||--o{ application : "收到申请"
+activity ||--o{ review : "关联"
+@enduml
