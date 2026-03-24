@@ -1,0 +1,47 @@
+@startuml
+!define RECTANGLE class
+
+title 校园搭子匹配系统 - 系统架构图
+
+package "前端" {
+  [Vue 3 前端] as Vue
+  [HTML/CSS/JS] as HTML
+}
+
+package "后端" {
+  rectangle "Controller 层" as Controller
+  rectangle "Service 层" as Service
+  rectangle "Mapper 层 (MyBatis)" as Mapper
+  rectangle "Security 层 (JWT)" as Security
+}
+
+package "数据层" {
+  database "MySQL" as MySQL
+  database "Redis (缓存)" as Redis
+}
+
+package "外部服务" {
+  [云服务器] as Cloud
+}
+
+Vue --> Controller : HTTP/RESTful
+Controller --> Security : 认证拦截
+Security --> Service : 权限验证通过
+Service --> Mapper : 数据操作
+Mapper --> MySQL : SQL
+Service --> Redis : 缓存读写
+Cloud --> Vue : 部署
+
+note right of Security
+  Spring Security + JWT
+  无状态认证
+end note
+
+note right of Service
+  业务逻辑：
+  - 用户管理
+  - 活动管理
+  - 匹配逻辑
+  - 评价计算
+end note
+@enduml
