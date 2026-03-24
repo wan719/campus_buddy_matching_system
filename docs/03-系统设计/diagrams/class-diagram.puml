@@ -1,0 +1,94 @@
+```plantuml
+@startuml
+title 核心类图
+
+package "实体层 (entity)" {
+  class User {
+    - Long id
+    - String studentId
+    - String passwordHash
+    - String nickname
+    - String avatarUrl
+    - Integer creditScore
+    + getter/setter
+  }
+
+  class Activity {
+    - Long id
+    - Long creatorId
+    - String category
+    - String title
+    - String location
+    - LocalDateTime appointmentTime
+    - Integer maxMembers
+    - Integer currentMembers
+    - String status
+  }
+
+  class Application {
+    - Long id
+    - Long activityId
+    - Long applicantId
+    - String status
+    - String applyMsg
+  }
+
+  class Review {
+    - Long id
+    - Long fromUserId
+    - Long toUserId
+    - Long activityId
+    - Integer rating
+    - String comment
+  }
+}
+
+package "服务层 (service)" {
+  interface UserService {
+    + register(RegisterDTO)
+    + login(LoginDTO)
+    + getProfile(Long userId)
+  }
+
+  interface ActivityService {
+    + publish(ActivityDTO)
+    + getList(PageParam)
+    + getDetail(Long id)
+    + apply(Long activityId, Long userId)
+    + approve(ApplicationDTO)
+  }
+
+  class UserServiceImpl {
+    - UserMapper userMapper
+    - PasswordEncoder passwordEncoder
+    - JwtUtil jwtUtil
+  }
+
+  class ActivityServiceImpl {
+    - ActivityMapper activityMapper
+    - ApplicationMapper applicationMapper
+    - TeamMemberMapper teamMemberMapper
+  }
+}
+
+package "数据访问层 (mapper)" {
+  interface UserMapper {
+    + insert(User)
+    + selectByStudentId(String)
+    + selectById(Long)
+  }
+
+  interface ActivityMapper {
+    + insert(Activity)
+    + selectList(QueryParam)
+    + selectById(Long)
+    + update(Activity)
+  }
+}
+
+UserService <|.. UserServiceImpl
+ActivityService <|.. ActivityServiceImpl
+UserServiceImpl --> UserMapper
+UserServiceImpl --> JwtUtil
+ActivityServiceImpl --> ActivityMapper
+@enduml
