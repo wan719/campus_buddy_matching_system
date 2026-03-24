@@ -1,5 +1,5 @@
 ```plantuml
-@startuml
+@startuml 核心类图
 title 核心类图
 
 package "实体层 (entity)" {

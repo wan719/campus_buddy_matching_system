@@ -1,4 +1,4 @@
-@startuml
+@startuml er图设计
 !define Table(name,desc) class name as "desc" << (T,#FFAAAA) >>
 
 Table(user, "用户表") {
