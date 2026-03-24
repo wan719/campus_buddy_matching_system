@@ -1,4 +1,4 @@
-@startuml
+@startuml 校园搭子匹配系统 - 系统架构图
 !define RECTANGLE class
 
 title 校园搭子匹配系统 - 系统架构图
