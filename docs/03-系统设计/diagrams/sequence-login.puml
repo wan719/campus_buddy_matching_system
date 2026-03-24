@@ -1,0 +1,46 @@
+@startuml
+title 用户登录时序图
+
+actor 用户
+participant "前端" as Frontend
+participant "Controller" as Controller
+participant "UserService" as Service
+participant "UserMapper" as Mapper
+participant "JwtUtil" as JWT
+database "MySQL" as DB
+
+用户 -> Frontend: 输入学号/密码
+Frontend -> Controller: POST /auth/login
+activate Controller
+
+Controller -> Service: login(studentId, password)
+activate Service
+
+Service -> Mapper: selectByStudentId(studentId)
+activate Mapper
+Mapper -> DB: SELECT * FROM user WHERE student_id = ?
+DB --> Mapper: 返回用户信息
+Mapper --> Service: User对象
+deactivate Mapper
+
+alt 用户不存在
+  Service --> Controller: 401 用户不存在
+  Controller --> Frontend: 错误响应
+  Frontend --> 用户: 提示"用户不存在"
+else 密码错误
+  Service --> Controller: 401 密码错误
+  Controller --> Frontend: 错误响应
+  Frontend --> 用户: 提示"密码错误"
+else 验证通过
+  Service -> JWT: generateToken(userId)
+  activate JWT
+  JWT --> Service: JWT Token
+  deactivate JWT
+  Service --> Controller: 返回Token + 用户信息
+  deactivate Service
+  Controller --> Frontend: 200 登录成功
+  deactivate Controller
+  Frontend --> 用户: 保存Token，跳转首页
+end
+
+@enduml
