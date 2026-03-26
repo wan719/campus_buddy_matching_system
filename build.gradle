@@ -27,18 +27,37 @@ repositories {
 }
 
 dependencies {
+	 // Spring Boot Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	// Spring Boot Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// Spring Boot Web MVC
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	// MyBatis
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
+	// Lombok
 	compileOnly 'org.projectlombok:lombok'
+	// MySQL Connector/J
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	// Lombok Annotation Processor
 	annotationProcessor 'org.projectlombok:lombok'
+	// Testing dependencies
 	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
+	// Spring Boot Validation Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
+	// Spring Boot Web MVC Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	// MyBatis Test
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
+	// JUnit 5
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// JJWT for JWT handling
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	// JJWT runtime dependencies
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	// JJWT Jackson integration for JSON processing
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 }
 
 tasks.named('test') {
