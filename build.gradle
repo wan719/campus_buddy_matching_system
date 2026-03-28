@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '4.0.4'
+	id 'org.springframework.boot' version '3.5.13'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -31,8 +31,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	// Spring Boot Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	// Spring Boot Web MVC
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	// Spring Boot Web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// MyBatis
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
 	// Lombok
@@ -41,12 +41,9 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	// Lombok Annotation Processor
 	annotationProcessor 'org.projectlombok:lombok'
-	// Testing dependencies
-	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
-	// Spring Boot Validation Test
-	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
-	// Spring Boot Web MVC Test
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	// Spring Boot Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 	// MyBatis Test
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
 	// JUnit 5
@@ -57,9 +54,23 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	// JJWT Jackson integration for JSON processing
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
+	// H2 Database for testing
+	testImplementation 'com.h2database:h2'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+    doFirst {
+        println "Test classpath: ${classpath.asPath}"
+        println "Test classes dir: ${sourceSets.test.output.classesDirs.asPath}"
+    }
+    // 显式设置类路径（强制包含测试输出）
+    classpath = sourceSets.test.runtimeClasspath
 }

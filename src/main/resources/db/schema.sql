@@ -1,147 +1,164 @@
--- 校园搭子匹配系统数据库表结构
--- 数据库: campus_buddy_matching_system
--- 字符集: utf8mb4
--- ============================================
--- 1. 用户表 (users)
--- ============================================
-CREATE TABLE IF NOT EXISTS users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '用户ID',
-    username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
-    password VARCHAR(255) NOT NULL COMMENT '加密密码',
-    nickname VARCHAR(50) COMMENT '昵称',
-    avatar VARCHAR(500) COMMENT '头像URL',
-    email VARCHAR(100) COMMENT '邮箱',
-    phone VARCHAR(20) COMMENT '手机号',
-    gender TINYINT DEFAULT 0 COMMENT '性别: 0-保密, 1-男, 2-女',
-    age INT COMMENT '年龄',
-    school VARCHAR(100) COMMENT '学校名称',
-    major VARCHAR(100) COMMENT '专业',
-    grade VARCHAR(20) COMMENT '年级',
-    bio TEXT COMMENT '个人简介',
-    interests VARCHAR(500) COMMENT '兴趣爱好(逗号分隔)',
-    status TINYINT DEFAULT 1 COMMENT '状态: 0-禁用, 1-正常',
-    last_login_time DATETIME COMMENT '最后登录时间',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    INDEX idx_username (username),
-    INDEX idx_school (school),
-    INDEX idx_status (status)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户表';
--- ============================================
--- 2. 搭子需求表 (buddy_requests)
--- ============================================
-CREATE TABLE IF NOT EXISTS buddy_requests (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '需求ID',
-    user_id BIGINT NOT NULL COMMENT '发布用户ID',
-    title VARCHAR(100) NOT NULL COMMENT '需求标题',
-    content TEXT NOT NULL COMMENT '需求详情',
-    category VARCHAR(50) NOT NULL COMMENT '搭子类型: 学习/运动/游戏/吃饭/旅行/其他',
-    tags VARCHAR(200) COMMENT '标签(逗号分隔)',
-    location VARCHAR(200) COMMENT '地点/范围',
-    expected_time VARCHAR(100) COMMENT '期望时间',
-    required_gender TINYINT DEFAULT 0 COMMENT '性别要求: 0-不限, 1-男, 2-女',
-    required_age_min INT COMMENT '最小年龄要求',
-    required_age_max INT COMMENT '最大年龄要求',
-    max_buddies INT DEFAULT 1 COMMENT '需要搭子数量',
-    status TINYINT DEFAULT 0 COMMENT '状态: 0-招募中, 1-已匹配, 2-已结束, 3-已取消',
-    view_count INT DEFAULT 0 COMMENT '浏览次数',
-    apply_count INT DEFAULT 0 COMMENT '申请次数',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user_id (user_id),
-    INDEX idx_category (category),
-    INDEX idx_status (status),
-    INDEX idx_created_at (created_at)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '搭子需求表';
--- ============================================
--- 3. 匹配申请表 (match_applications)
--- ============================================
-CREATE TABLE IF NOT EXISTS match_applications (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '申请ID',
-    request_id BIGINT NOT NULL COMMENT '需求ID',
-    applicant_id BIGINT NOT NULL COMMENT '申请人ID',
-    message TEXT COMMENT '申请留言',
-    status TINYINT DEFAULT 0 COMMENT '状态: 0-待处理, 1-已同意, 2-已拒绝, 3-已取消',
-    response_message TEXT COMMENT '回复留言',
-    handled_at DATETIME COMMENT '处理时间',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    FOREIGN KEY (request_id) REFERENCES buddy_requests(id) ON DELETE CASCADE,
-    FOREIGN KEY (applicant_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY uk_request_applicant (request_id, applicant_id),
-    INDEX idx_request_id (request_id),
-    INDEX idx_applicant_id (applicant_id),
-    INDEX idx_status (status)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '匹配申请表';
--- ============================================
--- 4. 匹配记录表 (match_records)
--- ============================================
-CREATE TABLE IF NOT EXISTS match_records (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '记录ID',
-    request_id BIGINT NOT NULL COMMENT '需求ID',
-    requester_id BIGINT NOT NULL COMMENT '需求发布者ID',
-    buddy_id BIGINT NOT NULL COMMENT '搭子用户ID',
-    status TINYINT DEFAULT 1 COMMENT '状态: 1-匹配成功, 2-已结束, 3-已取消',
-    remark TEXT COMMENT '备注',
-    ended_at DATETIME COMMENT '结束时间',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    FOREIGN KEY (request_id) REFERENCES buddy_requests(id) ON DELETE CASCADE,
-    FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (buddy_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_request_id (request_id),
-    INDEX idx_requester_id (requester_id),
-    INDEX idx_buddy_id (buddy_id),
-    INDEX idx_status (status)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '匹配记录表';
--- ============================================
--- 5. 消息通知表 (notifications)
--- ============================================
-CREATE TABLE IF NOT EXISTS notifications (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '通知ID',
-    user_id BIGINT NOT NULL COMMENT '接收用户ID',
-    type VARCHAR(50) NOT NULL COMMENT '通知类型: MATCH_APPLY-匹配申请, MATCH_AGREE-匹配同意, MATCH_REJECT-匹配拒绝, SYSTEM-系统通知',
-    title VARCHAR(100) NOT NULL COMMENT '通知标题',
-    content TEXT COMMENT '通知内容',
-    related_id BIGINT COMMENT '关联ID(如申请ID、匹配ID等)',
-    is_read TINYINT DEFAULT 0 COMMENT '是否已读: 0-未读, 1-已读',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user_id (user_id),
-    INDEX idx_type (type),
-    INDEX idx_is_read (is_read),
-    INDEX idx_created_at (created_at)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '消息通知表';
--- ============================================
--- 6. 用户关注表 (user_follows)
--- ============================================
-CREATE TABLE IF NOT EXISTS user_follows (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '关注ID',
-    follower_id BIGINT NOT NULL COMMENT '关注者ID',
-    following_id BIGINT NOT NULL COMMENT '被关注者ID',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '关注时间',
-    FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY uk_follow (follower_id, following_id),
-    INDEX idx_follower_id (follower_id),
-    INDEX idx_following_id (following_id)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户关注表';
--- ============================================
--- 7. 用户评分表 (user_ratings)
--- ============================================
-CREATE TABLE IF NOT EXISTS user_ratings (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '评分ID',
-    match_id BIGINT NOT NULL COMMENT '匹配记录ID',
-    rater_id BIGINT NOT NULL COMMENT '评分者ID',
-    rated_id BIGINT NOT NULL COMMENT '被评分者ID',
-    rating INT NOT NULL COMMENT '评分: 1-5星',
-    comment TEXT COMMENT '评价内容',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    FOREIGN KEY (match_id) REFERENCES match_records(id) ON DELETE CASCADE,
-    FOREIGN KEY (rater_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (rated_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY uk_match_rater (match_id, rater_id),
-    INDEX idx_match_id (match_id),
-    INDEX idx_rated_id (rated_id)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户评分表';
+-- Active: 1773751059041@@127.0.0.1@3306@campus_buddy_matching_system
+-- =====================================================
+-- 校园搭子匹配系统 2.0 - 完整数据库表结构
+-- 整合 RBAC 权限模型 + 业务表
+-- MySQL 8.0
+-- =====================================================
+-- 设置字符集
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+-- =====================================================
+-- 1. 用户表（整合 RBAC 用户）
+-- =====================================================
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+    `student_id` VARCHAR(20) NOT NULL COMMENT '学号',
+    `username` VARCHAR(50) NOT NULL COMMENT '登录用户名',
+    `password` VARCHAR(255) NOT NULL COMMENT '密码（BCrypt加密）',
+    `email` VARCHAR(100) NOT NULL COMMENT '邮箱',
+    `nickname` VARCHAR(50) NOT NULL COMMENT '昵称',
+    `avatar_url` VARCHAR(255) DEFAULT NULL COMMENT '头像URL',
+    `college` VARCHAR(100) DEFAULT NULL COMMENT '学院',
+    `grade` INT DEFAULT NULL COMMENT '入学年份',
+    `tags` JSON DEFAULT NULL COMMENT '个人标签（如["学霸","熬夜党"]）',
+    `credit_score` INT NOT NULL DEFAULT 100 COMMENT '信用分',
+    `enabled` BOOLEAN NOT NULL DEFAULT TRUE COMMENT '账号是否启用',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_student_id` (`student_id`),
+    UNIQUE KEY `uk_username` (`username`),
+    UNIQUE KEY `uk_email` (`email`),
+    KEY `idx_credit_score` (`credit_score`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户表（整合RBAC）';
+-- =====================================================
+-- 2. 角色表
+-- =====================================================
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE `roles` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+    `name` VARCHAR(50) NOT NULL COMMENT '角色名称（如 ROLE_ADMIN, ROLE_USER）',
+    `description` VARCHAR(255) DEFAULT NULL COMMENT '角色描述',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_name` (`name`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色表';
+-- =====================================================
+-- 3. 权限表
+-- =====================================================
+DROP TABLE IF EXISTS `permissions`;
+CREATE TABLE `permissions` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '权限ID',
+    `name` VARCHAR(100) NOT NULL COMMENT '权限名称（如 user:read, activity:create）',
+    `description` VARCHAR(255) DEFAULT NULL COMMENT '权限描述',
+    `resource` VARCHAR(50) NOT NULL COMMENT '资源类型（如 user, role, activity）',
+    `action` VARCHAR(50) NOT NULL COMMENT '操作类型（如 create, read, update, delete）',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_name` (`name`),
+    UNIQUE KEY `uk_resource_action` (`resource`, `action`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '权限表';
+-- =====================================================
+-- 4. 用户-角色关联表（多对多）
+-- =====================================================
+DROP TABLE IF EXISTS `user_role`;
+CREATE TABLE `user_role` (
+    `user_id` BIGINT NOT NULL COMMENT '用户ID',
+    `role_id` BIGINT NOT NULL COMMENT '角色ID',
+    PRIMARY KEY (`user_id`, `role_id`),
+    CONSTRAINT `fk_user_role_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_user_role_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户-角色关联表';
+-- =====================================================
+-- 5. 角色-权限关联表（多对多）
+-- =====================================================
+DROP TABLE IF EXISTS `role_permission`;
+CREATE TABLE `role_permission` (
+    `role_id` BIGINT NOT NULL COMMENT '角色ID',
+    `permission_id` BIGINT NOT NULL COMMENT '权限ID',
+    PRIMARY KEY (`role_id`, `permission_id`),
+    CONSTRAINT `fk_role_permission_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_role_permission_permission` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色-权限关联表';
+-- =====================================================
+-- 6. 活动表（搭子活动）
+-- =====================================================
+DROP TABLE IF EXISTS `activity`;
+CREATE TABLE `activity` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '活动ID',
+    `creator_id` BIGINT NOT NULL COMMENT '发起人ID（关联users.id）',
+    `category` VARCHAR(20) NOT NULL COMMENT '类型：study/sports/food/game/other',
+    `title` VARCHAR(100) NOT NULL COMMENT '标题',
+    `detail` TEXT COMMENT '详细描述',
+    `location` VARCHAR(100) DEFAULT NULL COMMENT '地点',
+    `appointment_time` DATETIME DEFAULT NULL COMMENT '约定时间',
+    `max_members` INT NOT NULL DEFAULT 2 COMMENT '最大人数',
+    `current_members` INT NOT NULL DEFAULT 1 COMMENT '当前人数',
+    `status` VARCHAR(20) NOT NULL DEFAULT 'open' COMMENT '状态：open/full/closed',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_creator_id` (`creator_id`),
+    KEY `idx_category` (`category`),
+    KEY `idx_status` (`status`),
+    KEY `idx_appointment_time` (`appointment_time`),
+    CONSTRAINT `fk_activity_creator` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '搭子活动表';
+-- =====================================================
+-- 7. 队伍成员表（活动参与人）
+-- =====================================================
+DROP TABLE IF EXISTS `team_member`;
+CREATE TABLE `team_member` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `activity_id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
+    `role` VARCHAR(20) NOT NULL DEFAULT 'member' COMMENT '角色：leader/member',
+    `joined_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_activity_user` (`activity_id`, `user_id`),
+    KEY `idx_activity_id` (`activity_id`),
+    KEY `idx_user_id` (`user_id`),
+    CONSTRAINT `fk_team_member_activity` FOREIGN KEY (`activity_id`) REFERENCES `activity` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_team_member_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '队伍成员表';
+-- =====================================================
+-- 8. 申请表（用户申请加入活动）
+-- =====================================================
+DROP TABLE IF EXISTS `application`;
+CREATE TABLE `application` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `activity_id` BIGINT NOT NULL,
+    `applicant_id` BIGINT NOT NULL,
+    `status` VARCHAR(20) NOT NULL DEFAULT 'pending' COMMENT '状态：pending/approved/rejected',
+    `apply_msg` VARCHAR(255) DEFAULT NULL COMMENT '申请留言',
+    `processed_at` TIMESTAMP NULL DEFAULT NULL COMMENT '处理时间',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_activity_id` (`activity_id`),
+    KEY `idx_applicant_id` (`applicant_id`),
+    KEY `idx_status` (`status`),
+    CONSTRAINT `fk_application_activity` FOREIGN KEY (`activity_id`) REFERENCES `activity` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_application_user` FOREIGN KEY (`applicant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '申请表';
+-- =====================================================
+-- 9. 评价表
+-- =====================================================
+DROP TABLE IF EXISTS `review`;
+CREATE TABLE `review` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `from_user_id` BIGINT NOT NULL COMMENT '评价人ID',
+    `to_user_id` BIGINT NOT NULL COMMENT '被评价人ID',
+    `activity_id` BIGINT NOT NULL COMMENT '关联的活动ID',
+    `rating` TINYINT NOT NULL COMMENT '评分1-5',
+    `comment` VARCHAR(255) DEFAULT NULL COMMENT '评语',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_review_unique` (`from_user_id`, `to_user_id`, `activity_id`),
+    KEY `idx_to_user_id` (`to_user_id`),
+    CONSTRAINT `fk_review_from_user` FOREIGN KEY (`from_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_review_to_user` FOREIGN KEY (`to_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_review_activity` FOREIGN KEY (`activity_id`) REFERENCES `activity` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '评价表';

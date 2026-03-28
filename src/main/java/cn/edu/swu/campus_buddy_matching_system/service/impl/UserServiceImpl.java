@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
         // 创建新用户
         User user = new User();
         user.setStudentId(request.getStudentId());
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setNickname(request.getNickname());
 
         userMapper.insert(user);
@@ -48,11 +48,11 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("用户不存在");
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("密码错误");
         }
 
-        if (!user.getIsActive()) {
+        if (!user.getEnabled()) {
             throw new RuntimeException("账号已被禁用");
         }
 
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
         vo.setStudentId(user.getStudentId());
         vo.setNickname(user.getNickname());
         vo.setAvatarUrl(user.getAvatarUrl());
-        vo.setCreditScore(user.getCreditScore());
+        vo.setCreditScore(user.getEnabled() ? user.getCreditScore().toString() : "0".toString());
         return vo;
     }
 }

@@ -11,6 +11,12 @@ spring:
   jackson:
     time-zone: Asia/Shanghai
     date-format: yyyy-MM-dd HH:mm:ss
+  # SQL初始化配置
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
 
 mybatis:
   configuration:
@@ -26,7 +32,12 @@ jwt:
 server:
   port: 8080
 
+# 日志配置
 logging:
   level:
-    root: INFO
-    "[cn.edu.swu.campus_buddy_matching_system]": DEBUG
+    # MyBatis Mapper日志（显示SQL执行）
+    '[cn.edu.swu.campus_buddy_matching_system.mapper]': DEBUG
+    # SQL日志
+    '[org.springframework.jdbc]': DEBUG
+    # Spring Security日志
+    '[org.springframework.security]': DEBUG
