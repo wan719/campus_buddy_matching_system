@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.13'
+	id 'org.springframework.boot' version '4.0.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -32,7 +32,9 @@ dependencies {
 	// Spring Boot Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// Spring Boot Web
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	// Spring Boot Data JDBC
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	// MyBatis
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
 	// Lombok
@@ -41,21 +43,26 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	// Lombok Annotation Processor
 	annotationProcessor 'org.projectlombok:lombok'
-	// Spring Boot Test
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-	// MyBatis Test
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
-	// JUnit 5
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// Spring Boot DevTools
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	// JJWT for JWT handling
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	// JJWT runtime dependencies
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	// JJWT Jackson integration for JSON processing
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-	// H2 Database for testing
-	testImplementation 'com.h2database:h2'
+	
+	// 测试依赖
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    
+    // H2 数据库用于测试
+    testImplementation 'com.h2database:h2'
+    
+    // 确保 Lombok 在测试中可用
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
@@ -67,10 +74,12 @@ test {
         events "passed", "skipped", "failed"
         exceptionFormat "full"
     }
-    doFirst {
-        println "Test classpath: ${classpath.asPath}"
-        println "Test classes dir: ${sourceSets.test.output.classesDirs.asPath}"
-    }
-    // 显式设置类路径（强制包含测试输出）
+    // 设置测试时的系统属性
+    systemProperty "spring.profiles.active", "test"
+}
+
+// 确保测试编译时包含所有依赖
+tasks.withType(Test) {
+    jvmArgs "-Xmx512m"
     classpath = sourceSets.test.runtimeClasspath
 }

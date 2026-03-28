@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    # H2 内存数据库配置
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:              # 密码留空，H2 内存数据库默认无密码
+    # 如果需要指定密码，用这个：
+    # password: 20060719li
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: false
+  
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+      continue-on-error: true
+  
+  # 禁用安全自动配置以避免冲突
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+jwt:
+  secret: test-secret-key-for-unit-tests-2024
+  expiration: 86400000
+
+logging:
+  level:
+    '[cn.edu.swu]': DEBUG
+    '[org.springframework.test]': INFO
+    '[org.springframework.jdbc]': DEBUG
