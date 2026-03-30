@@ -121,8 +121,11 @@ public class User {
             return Set.of();
         }
         return this.roles.stream()
-                .flatMap(role -> role.getPermissions().stream())
+                .map(Role::getPermissions)
+                .filter(permissionSet -> permissionSet != null)
+                .flatMap(Set::stream)
                 .map(Permission::getName)
+                .filter(name -> name != null && !name.isBlank())
                 .collect(Collectors.toSet());
     }
 

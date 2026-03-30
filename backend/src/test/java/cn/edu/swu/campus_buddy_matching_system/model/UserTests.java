@@ -90,6 +90,41 @@ class UserTests {
     }
 
     @Test
+    void testGetPermissionsHandlesNullPermissionSetsAndInvalidNames() {
+        Role roleWithNullPermissions = Role.builder()
+                .name("ROLE_EMPTY")
+                .permissions(null)
+                .build();
+
+        Permission validPermission = Permission.builder()
+                .name("activity:read")
+                .resource("activity")
+                .action("read")
+                .build();
+        Permission blankNamePermission = Permission.builder()
+                .name("   ")
+                .resource("activity")
+                .action("update")
+                .build();
+
+        Role roleWithMixedPermissions = Role.builder()
+                .name("ROLE_MIXED")
+                .build();
+        roleWithMixedPermissions.addPermission(validPermission);
+        roleWithMixedPermissions.addPermission(blankNamePermission);
+
+        User user = User.builder()
+                .username("tester")
+                .build();
+        user.addRole(roleWithNullPermissions);
+        user.addRole(roleWithMixedPermissions);
+
+        Set<String> permissions = user.getPermissions();
+        assertEquals(1, permissions.size());
+        assertTrue(permissions.contains("activity:read"));
+    }
+
+    @Test
     void testPermissionNameBuilder() {
         String permissionName = Permission.buildPermissionName("activity", "create");
         assertEquals("activity:create", permissionName);

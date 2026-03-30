@@ -4,7 +4,7 @@
 本项目旨在帮助在校大学生找到学习、运动、吃饭等"搭子"，建立真实的校园社交连接。
 
 ## 技术栈
-- Spring Boot 4.04
+- Spring Boot 4.0.4
 - Spring Security + JWT
 - MyBatis
 - MySQL 8.0
@@ -25,7 +25,7 @@
 git clone https://github.com/wan719/campus_buddy_matching_system.git
 
 # 进入目录
-cd campus_buddy_matching_system
+cd campus_buddy_matching_system/backend
 
 # 运行
 ./gradlew bootRun
