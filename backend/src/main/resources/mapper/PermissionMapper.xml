@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.edu.swu.campus_buddy_matching_system.mapper.PermissionMapper">
+<mapper namespace="cn.edu.swu.campus_buddy_matching_system.repository.PermissionMapper">
 
-    <!-- BaseResultMap: 权限基础结果映射 -->
-    <resultMap id="BaseResultMap" type="cn.edu.swu.campus_buddy_matching_system.model.entity.Permission">
-        <id column="id" property="id"/>
-        <result column="name" property="name"/>
-        <result column="description" property="description"/>
-        <result column="resource" property="resource"/>
-        <result column="action" property="action"/>
-        <result column="created_at" property="createdAt"/>
-        <result column="updated_at" property="updatedAt"/>
-    </resultMap>
+    <select id="findPermissionsByRoleId" resultMap="permissionResult">
+        SELECT p.*
+        FROM permissions p
+        INNER JOIN role_permission rp ON p.id = rp.permission_id
+        WHERE rp.role_id = #{roleId}
+        ORDER BY p.resource, p.action
+    </select>
 
-    <!-- Select permissions by user -->
-    <select id="selectByUser" resultMap="BaseResultMap">
-        SELECT DISTINCT
-            p.id,
-            p.name,
-            p.description,
-            p.resource,
-            p.action,
-            p.created_at,
-            p.updated_at
+    <select id="selectByUser" resultMap="permissionResult">
+        SELECT DISTINCT p.*
         FROM permissions p
         INNER JOIN role_permission rp ON p.id = rp.permission_id
         INNER JOIN roles r ON rp.role_id = r.id
@@ -33,16 +23,8 @@
         ORDER BY p.resource, p.action
     </select>
 
-    <!-- Select permissions by role -->
-    <select id="selectByRole" resultMap="BaseResultMap">
-        SELECT
-            p.id,
-            p.name,
-            p.description,
-            p.resource,
-            p.action,
-            p.created_at,
-            p.updated_at
+    <select id="selectByRole" resultMap="permissionResult">
+        SELECT p.*
         FROM permissions p
         INNER JOIN role_permission rp ON p.id = rp.permission_id
         INNER JOIN roles r ON rp.role_id = r.id

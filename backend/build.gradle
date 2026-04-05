@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.4'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.1.5'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'cn.edu.swu'
@@ -22,7 +22,6 @@ configurations {
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public' }
-    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
     mavenCentral()
 }
 
@@ -30,9 +29,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -44,7 +42,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     testCompileOnly 'org.projectlombok:lombok'
@@ -52,11 +50,7 @@ dependencies {
 }
 
 tasks.named('test') {
-    enabled = false
-    useJUnitPlatform {
-        // 确保 JUnit 5 引擎被使用
-        includeEngines 'junit-jupiter'
-    }
+    useJUnitPlatform()
     testLogging {
         events 'passed', 'skipped', 'failed'
         exceptionFormat 'full'
@@ -65,25 +59,5 @@ tasks.named('test') {
         showCauses = true
         showStackTraces = true
     }
-    systemProperty 'spring.profiles.active', 'test'
-
-    // 确保测试类路径正确
-    classpath = sourceSets.test.runtimeClasspath
-
-    // 设置工作目录
-    workingDir = project.rootDir
-
-    // 调试 JVM 选项
-    jvmArgs '-Xmx512m', '-XX:+HeapDumpOnOutOfMemoryError', '-Dfile.encoding=UTF-8'
-
-    // 扫描测试类
-    scanForTestClasses = true
-    include '**/*Test.class'
-    include '**/*Tests.class'
-}
-
-tasks.withType(Test).configureEach {
-    jvmArgs '-Xmx512m'
-    classpath = sourceSets.test.runtimeClasspath
     systemProperty 'spring.profiles.active', 'test'
 }
