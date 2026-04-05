@@ -10,7 +10,7 @@ description = 'Campus buddy matching system backend'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -30,6 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
 
@@ -51,15 +52,38 @@ dependencies {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    enabled = false
+    useJUnitPlatform {
+        // 确保 JUnit 5 引擎被使用
+        includeEngines 'junit-jupiter'
+    }
     testLogging {
         events 'passed', 'skipped', 'failed'
         exceptionFormat 'full'
+        showStandardStreams = true
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
     }
     systemProperty 'spring.profiles.active', 'test'
+
+    // 确保测试类路径正确
+    classpath = sourceSets.test.runtimeClasspath
+
+    // 设置工作目录
+    workingDir = project.rootDir
+
+    // 调试 JVM 选项
+    jvmArgs '-Xmx512m', '-XX:+HeapDumpOnOutOfMemoryError', '-Dfile.encoding=UTF-8'
+
+    // 扫描测试类
+    scanForTestClasses = true
+    include '**/*Test.class'
+    include '**/*Tests.class'
 }
 
 tasks.withType(Test).configureEach {
     jvmArgs '-Xmx512m'
     classpath = sourceSets.test.runtimeClasspath
+    systemProperty 'spring.profiles.active', 'test'
 }

@@ -43,3 +43,8 @@ logging:
     "[org.springframework.security]": DEBUG
   pattern:
     console: "%clr(%d{MM-dd HH:mm:ss}){faint} %clr(%-5level) : %msg%n"
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
