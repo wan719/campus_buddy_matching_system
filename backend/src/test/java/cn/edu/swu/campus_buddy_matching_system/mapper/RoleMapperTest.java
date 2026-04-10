@@ -1,8 +1,9 @@
 package cn.edu.swu.campus_buddy_matching_system.mapper;
 
 import cn.edu.swu.campus_buddy_matching_system.CampusApplication;
+import cn.edu.swu.campus_buddy_matching_system.mapper.RoleMapper;
 import cn.edu.swu.campus_buddy_matching_system.model.entity.Role;
-import cn.edu.swu.campus_buddy_matching_system.repository.RoleMapper;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

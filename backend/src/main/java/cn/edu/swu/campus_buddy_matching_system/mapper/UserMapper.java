@@ -1,4 +1,4 @@
-package cn.edu.swu.campus_buddy_matching_system.repository;
+package cn.edu.swu.campus_buddy_matching_system.mapper;
 
 import cn.edu.swu.campus_buddy_matching_system.model.entity.User;
 import org.apache.ibatis.annotations.*;
