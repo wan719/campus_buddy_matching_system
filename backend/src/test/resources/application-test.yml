@@ -1,37 +1,32 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
+  
   datasource:
-    # H2 内存数据库配置
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:              # 密码留空，H2 内存数据库默认无密码
-    # 如果需要指定密码，用这个：
-    # password: 20060719li
-  
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: false
-  
+    url: jdbc:mysql://localhost:3306/campus_buddy_matching_system_test?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 20060719li
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+
   sql:
     init:
       mode: always
       schema-locations: classpath:db/schema.sql
       data-locations: classpath:db/data.sql
       continue-on-error: true
-  
-  # 禁用安全自动配置以避免冲突
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
 
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: 
+    - classpath:mapper/*.xml
+    - classpath*:mapper/*.xml
+  type-aliases-package: cn.edu.swu.campus_buddy_matching_system.model.entity
 
 jwt:
   secret: test-secret-key-for-unit-tests-2024
@@ -39,6 +34,7 @@ jwt:
 
 logging:
   level:
-    '[cn.edu.swu]': DEBUG
-    '[org.springframework.test]': INFO
-    '[org.springframework.jdbc]': DEBUG
+    cn.edu.swu: DEBUG
+    org.springframework.jdbc: DEBUG
+    org.mybatis: DEBUG
+    org.springframework.boot.autoconfigure: WARN

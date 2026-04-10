@@ -1,85 +1,63 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '4.0.4'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.1.5'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'cn.edu.swu'
 version = '0.0.1-SNAPSHOT'
-description = 'Demo project for Spring Boot'
+description = 'Campus buddy matching system backend'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	maven { url 'https://maven.aliyun.com/repository/public' }
-    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-	mavenCentral()
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    mavenCentral()
 }
 
 dependencies {
-	 // Spring Boot Security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	// Spring Boot Validation
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	// Spring Boot Web
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	// Spring Boot Data JDBC
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-	// MyBatis
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
-	// Lombok
-	compileOnly 'org.projectlombok:lombok'
-	// MySQL Connector/J
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	// Lombok Annotation Processor
-	annotationProcessor 'org.projectlombok:lombok'
-	// Spring Boot DevTools
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-	// JJWT for JWT handling
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	// JJWT runtime dependencies
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	// JJWT Jackson integration for JSON processing
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-	
-	// 测试依赖
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.2'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    
-    // H2 数据库用于测试
-    testImplementation 'com.h2database:h2'
-    
-    // 确保 Lombok 在测试中可用
+
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
-}
-test {
     useJUnitPlatform()
     testLogging {
-        events "passed", "skipped", "failed"
-        exceptionFormat "full"
+        events 'passed', 'skipped', 'failed'
+        exceptionFormat 'full'
+        showStandardStreams = true
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
     }
-    // 设置测试时的系统属性
-    systemProperty "spring.profiles.active", "test"
-}
-
-// 确保测试编译时包含所有依赖
-tasks.withType(Test) {
-    jvmArgs "-Xmx512m"
-    classpath = sourceSets.test.runtimeClasspath
+    systemProperty 'spring.profiles.active', 'test'
 }

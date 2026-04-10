@@ -1,4 +1,4 @@
-package cn.edu.swu.campus_buddy_matching_system.repository;
+package cn.edu.swu.campus_buddy_matching_system.mapper;
 
 import cn.edu.swu.campus_buddy_matching_system.model.entity.User;
 import org.apache.ibatis.annotations.*;
@@ -6,8 +6,14 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 public interface UserMapper {
 
-    @Insert("INSERT INTO users (student_id, username, password, email, nickname, avatar_url, college, grade, tags, credit_score, enabled) " +
-            "VALUES (#{studentId}, #{username}, #{password}, #{email}, #{nickname}, #{avatarUrl}, #{college}, #{grade}, #{tags}, #{creditScore}, #{enabled})")
+    // ==================== 注解方式实现 ====================
+
+    @Insert("""
+        INSERT INTO users
+        (student_id, username, password, email, nickname, avatar_url, college, grade, tags, credit_score, enabled)
+        VALUES
+        (#{studentId}, #{username}, #{password}, #{email}, #{nickname}, #{avatarUrl}, #{college}, #{grade}, #{tags}, #{creditScore}, #{enabled})
+        """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(User user);
 
@@ -30,19 +36,19 @@ public interface UserMapper {
             @Result(property = "roles", column = "id",
                     many = @Many(select = "cn.edu.swu.campus_buddy_matching_system.repository.RoleMapper.findRolesByUserId"))
     })
-    User findById(Long id);
+    User findById(@Param("id") Long id);
 
     @Select("SELECT * FROM users WHERE username = #{username}")
     @ResultMap("userResult")
-    User findByUsername(String username);
+    User findByUsername(@Param("username") String username);
 
     @Select("SELECT * FROM users WHERE student_id = #{studentId}")
     @ResultMap("userResult")
-    User findByStudentId(String studentId);
+    User findByStudentId(@Param("studentId") String studentId);
 
     @Select("SELECT * FROM users WHERE email = #{email}")
     @ResultMap("userResult")
-    User findByEmail(String email);
+    User findByEmail(@Param("email") String email);
 
     @Update("UPDATE users SET password = #{password}, updated_at = NOW() WHERE id = #{id}")
     int updatePassword(@Param("id") Long id, @Param("password") String password);

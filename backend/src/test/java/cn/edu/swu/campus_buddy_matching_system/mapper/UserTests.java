@@ -1,4 +1,4 @@
-package cn.edu.swu.campus_buddy_matching_system.model;
+package cn.edu.swu.campus_buddy_matching_system.mapper;
 
 import cn.edu.swu.campus_buddy_matching_system.model.entity.Permission;
 import cn.edu.swu.campus_buddy_matching_system.model.entity.Role;
@@ -87,6 +87,41 @@ class UserTests {
         assertTrue(user.hasPermission("user:read"));
         assertTrue(user.hasPermission("role:read"));
         assertFalse(user.hasPermission("user:create"));
+    }
+
+    @Test
+    void testGetPermissionsHandlesNullPermissionSetsAndInvalidNames() {
+        Role roleWithNullPermissions = Role.builder()
+                .name("ROLE_EMPTY")
+                .permissions(null)
+                .build();
+
+        Permission validPermission = Permission.builder()
+                .name("activity:read")
+                .resource("activity")
+                .action("read")
+                .build();
+        Permission blankNamePermission = Permission.builder()
+                .name("   ")
+                .resource("activity")
+                .action("update")
+                .build();
+
+        Role roleWithMixedPermissions = Role.builder()
+                .name("ROLE_MIXED")
+                .build();
+        roleWithMixedPermissions.addPermission(validPermission);
+        roleWithMixedPermissions.addPermission(blankNamePermission);
+
+        User user = User.builder()
+                .username("tester")
+                .build();
+        user.addRole(roleWithNullPermissions);
+        user.addRole(roleWithMixedPermissions);
+
+        Set<String> permissions = user.getPermissions();
+        assertEquals(1, permissions.size());
+        assertTrue(permissions.contains("activity:read"));
     }
 
     @Test
