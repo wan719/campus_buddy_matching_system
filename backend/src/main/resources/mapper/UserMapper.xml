@@ -2,6 +2,100 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.edu.swu.campus_buddy_matching_system.repository.UserMapper">
+<mapper namespace="cn.edu.swu.campus_buddy_matching_system.mapper.UserMapper">
+
+    <select id="selectByPage"
+            resultMap="cn.edu.swu.campus_buddy_matching_system.mapper.UserMapper.userResult">
+        SELECT *
+        FROM users
+        <where>
+            <if test="username != null and username != ''">
+                AND username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE CONCAT('%', #{email}, '%')
+            </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+        </where>
+        ORDER BY id
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countByPage" resultType="long">
+        SELECT COUNT(*)
+        FROM users
+        <where>
+            <if test="username != null and username != ''">
+                AND username LIKE CONCAT('%', #{username}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE CONCAT('%', #{email}, '%')
+            </if>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectWithRoles"
+            resultMap="userWithRolesResult">
+        SELECT u.id              AS user_id,
+               u.student_id      AS user_student_id,
+               u.username        AS user_username,
+               u.password        AS user_password,
+               u.email           AS user_email,
+               u.nickname        AS user_nickname,
+               u.avatar_url      AS user_avatar_url,
+               u.college         AS user_college,
+               u.grade           AS user_grade,
+               u.tags            AS user_tags,
+               u.credit_score    AS user_credit_score,
+               u.enabled         AS user_enabled,
+               u.created_at      AS user_created_at,
+               u.updated_at      AS user_updated_at,
+               r.id              AS role_id,
+               r.name            AS role_name,
+               r.description     AS role_description,
+               r.created_at      AS role_created_at,
+               r.updated_at      AS role_updated_at
+        FROM users u
+        LEFT JOIN user_role ur ON u.id = ur.user_id
+        LEFT JOIN roles r ON ur.role_id = r.id
+        WHERE u.id = #{id}
+    </select>
+
+    <resultMap id="userWithRolesResult"
+               type="cn.edu.swu.campus_buddy_matching_system.model.entity.User">
+        <id property="id" column="user_id"/>
+        <result property="studentId" column="user_student_id"/>
+        <result property="username" column="user_username"/>
+        <result property="password" column="user_password"/>
+        <result property="email" column="user_email"/>
+        <result property="nickname" column="user_nickname"/>
+        <result property="avatarUrl" column="user_avatar_url"/>
+        <result property="college" column="user_college"/>
+        <result property="grade" column="user_grade"/>
+        <result property="tags" column="user_tags"/>
+        <result property="creditScore" column="user_credit_score"/>
+        <result property="enabled" column="user_enabled"/>
+        <result property="createdAt" column="user_created_at"/>
+        <result property="updatedAt" column="user_updated_at"/>
+
+        <collection property="roles"
+                    ofType="cn.edu.swu.campus_buddy_matching_system.model.entity.Role">
+            <id property="id" column="role_id"/>
+            <result property="name" column="role_name"/>
+            <result property="description" column="role_description"/>
+            <result property="createdAt" column="role_created_at"/>
+            <result property="updatedAt" column="role_updated_at"/>
+        </collection>
+    </resultMap>
+
+    <delete id="delete">
+        DELETE FROM users
+        WHERE id = #{id}
+    </delete>
 
 </mapper>

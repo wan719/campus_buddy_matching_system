@@ -12,9 +12,9 @@ public interface PermissionMapper {
     // ==================== 注解方式实现 ====================
 
     @Insert("""
-        INSERT INTO permissions (name, description, resource, action)
-        VALUES (#{name}, #{description}, #{resource}, #{action})
-        """)
+            INSERT INTO permissions (name, description, resource, action)
+            VALUES (#{name}, #{description}, #{resource}, #{action})
+            """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Permission permission);
 
@@ -51,4 +51,6 @@ public interface PermissionMapper {
     List<Permission> selectByUser(@Param("userId") Long userId);
 
     List<Permission> selectByRole(@Param("roleId") Long roleId);
+
+    Permission selectById(Long id);
 }

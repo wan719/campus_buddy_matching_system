@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
                 .data(errors)
                 .build();
     }
-
+    
     @ExceptionHandler(Exception.class)
     public ApiResponse<Object> handleException(Exception e) {
         e.printStackTrace();

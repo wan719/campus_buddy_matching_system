@@ -2,14 +2,62 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.edu.swu.campus_buddy_matching_system.repository.RoleMapper">
+<mapper namespace="cn.edu.swu.campus_buddy_matching_system.mapper.RoleMapper">
 
-    <select id="findRolesByUserId" resultMap="roleResult">
+    <select id="findRolesByUserId"
+            resultMap="cn.edu.swu.campus_buddy_matching_system.mapper.RoleMapper.roleResult">
         SELECT r.*
         FROM roles r
         INNER JOIN user_role ur ON r.id = ur.role_id
         WHERE ur.user_id = #{userId}
         ORDER BY r.id
     </select>
+
+    <select id="selectAll"
+            resultMap="cn.edu.swu.campus_buddy_matching_system.mapper.RoleMapper.roleResult">
+        SELECT *
+        FROM roles
+        ORDER BY id
+    </select>
+
+    <select id="selectWithPermissions"
+            resultMap="roleWithPermissionsResult">
+        SELECT r.id              AS role_id,
+               r.name            AS role_name,
+               r.description     AS role_description,
+               r.created_at      AS role_created_at,
+               r.updated_at      AS role_updated_at,
+               p.id              AS permission_id,
+               p.name            AS permission_name,
+               p.description     AS permission_description,
+               p.resource        AS permission_resource,
+               p.action          AS permission_action,
+               p.created_at      AS permission_created_at,
+               p.updated_at      AS permission_updated_at
+        FROM roles r
+        LEFT JOIN role_permission rp ON r.id = rp.role_id
+        LEFT JOIN permissions p ON rp.permission_id = p.id
+        WHERE r.id = #{id}
+    </select>
+
+    <resultMap id="roleWithPermissionsResult"
+               type="cn.edu.swu.campus_buddy_matching_system.model.entity.Role">
+        <id property="id" column="role_id"/>
+        <result property="name" column="role_name"/>
+        <result property="description" column="role_description"/>
+        <result property="createdAt" column="role_created_at"/>
+        <result property="updatedAt" column="role_updated_at"/>
+
+        <collection property="permissions"
+                    ofType="cn.edu.swu.campus_buddy_matching_system.model.entity.Permission">
+            <id property="id" column="permission_id"/>
+            <result property="name" column="permission_name"/>
+            <result property="description" column="permission_description"/>
+            <result property="resource" column="permission_resource"/>
+            <result property="action" column="permission_action"/>
+            <result property="createdAt" column="permission_created_at"/>
+            <result property="updatedAt" column="permission_updated_at"/>
+        </collection>
+    </resultMap>
 
 </mapper>

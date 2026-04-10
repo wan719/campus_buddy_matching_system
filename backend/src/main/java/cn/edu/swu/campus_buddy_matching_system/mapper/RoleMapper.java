@@ -3,6 +3,7 @@ package cn.edu.swu.campus_buddy_matching_system.mapper;
 import cn.edu.swu.campus_buddy_matching_system.model.entity.Role;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Mapper
@@ -21,8 +22,7 @@ public interface RoleMapper {
             @Result(property = "description", column = "description"),
             @Result(property = "createdAt", column = "created_at"),
             @Result(property = "updatedAt", column = "updated_at"),
-            @Result(property = "permissions", column = "id",
-                    many = @Many(select = "cn.edu.swu.campus_buddy_matching_system.repository.PermissionMapper.findPermissionsByRoleId"))
+            @Result(property = "permissions", column = "id", many = @Many(select = "cn.edu.swu.campus_buddy_matching_system.mapper.PermissionMapper.findPermissionsByRoleId"))
     })
     Role findById(@Param("id") Long id);
 
@@ -39,4 +39,8 @@ public interface RoleMapper {
     // ==================== XML方式实现 ====================
 
     Set<Role> findRolesByUserId(@Param("userId") Long userId);
+
+    List<Role> selectAll();
+
+    Role selectWithPermissions(Long id);
 }

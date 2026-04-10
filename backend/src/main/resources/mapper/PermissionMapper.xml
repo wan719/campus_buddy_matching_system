@@ -2,9 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.edu.swu.campus_buddy_matching_system.repository.PermissionMapper">
+<mapper namespace="cn.edu.swu.campus_buddy_matching_system.mapper.PermissionMapper">
 
-    <select id="findPermissionsByRoleId" resultMap="permissionResult">
+    <select id="findPermissionsByRoleId"
+            resultMap="cn.edu.swu.campus_buddy_matching_system.mapper.PermissionMapper.permissionResult">
         SELECT p.*
         FROM permissions p
         INNER JOIN role_permission rp ON p.id = rp.permission_id
@@ -12,7 +13,8 @@
         ORDER BY p.resource, p.action
     </select>
 
-    <select id="selectByUser" resultMap="permissionResult">
+    <select id="selectByUser"
+            resultMap="cn.edu.swu.campus_buddy_matching_system.mapper.PermissionMapper.permissionResult">
         SELECT DISTINCT p.*
         FROM permissions p
         INNER JOIN role_permission rp ON p.id = rp.permission_id
@@ -23,7 +25,8 @@
         ORDER BY p.resource, p.action
     </select>
 
-    <select id="selectByRole" resultMap="permissionResult">
+    <select id="selectByRole"
+            resultMap="cn.edu.swu.campus_buddy_matching_system.mapper.PermissionMapper.permissionResult">
         SELECT p.*
         FROM permissions p
         INNER JOIN role_permission rp ON p.id = rp.permission_id
