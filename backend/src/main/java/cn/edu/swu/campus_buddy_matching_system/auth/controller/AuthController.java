@@ -1,5 +1,7 @@
 package cn.edu.swu.campus_buddy_matching_system.auth.controller;
 
+import cn.edu.swu.campus_buddy_matching_system.auth.dto.LoginResponse;
+import cn.edu.swu.campus_buddy_matching_system.auth.dto.UserLoginRequest;
 import cn.edu.swu.campus_buddy_matching_system.auth.dto.UserRegisterRequest;
 import cn.edu.swu.campus_buddy_matching_system.auth.service.AuthService;
 import cn.edu.swu.campus_buddy_matching_system.common.dto.ApiResponse;
@@ -39,6 +41,19 @@ public class AuthController {
             @Valid @RequestBody UserRegisterRequest request) {
         Long userId = authService.register(request);
         return ApiResponse.success("注册成功", Map.of("userId", userId));
+    }
+
+    @PostMapping("/login")
+    public ApiResponse<LoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
+        String token = authService.login(request);
+
+        LoginResponse response = LoginResponse.builder()
+                .token(token)
+                .type("Bearer")
+                .username(request.getUsername())
+                .build();
+
+        return ApiResponse.success("登录成功", response);
     }
 
     /**

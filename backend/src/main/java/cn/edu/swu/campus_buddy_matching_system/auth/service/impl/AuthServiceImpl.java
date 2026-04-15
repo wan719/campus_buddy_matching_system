@@ -1,13 +1,21 @@
-package cn.edu.swu.campus_buddy_matching_system.auth.service;
+package cn.edu.swu.campus_buddy_matching_system.auth.service.impl;
 
+import cn.edu.swu.campus_buddy_matching_system.auth.dto.UserLoginRequest;
 import cn.edu.swu.campus_buddy_matching_system.auth.dto.UserRegisterRequest;
+import cn.edu.swu.campus_buddy_matching_system.auth.service.AuthService;
+import cn.edu.swu.campus_buddy_matching_system.common.utils.JwtUtil;
 import cn.edu.swu.campus_buddy_matching_system.mapper.RoleMapper;
 import cn.edu.swu.campus_buddy_matching_system.mapper.UserMapper;
 import cn.edu.swu.campus_buddy_matching_system.mapper.UserRoleMapper;
 import cn.edu.swu.campus_buddy_matching_system.model.entity.Role;
 import cn.edu.swu.campus_buddy_matching_system.model.entity.User;
+import cn.edu.swu.campus_buddy_matching_system.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +30,8 @@ public class AuthServiceImpl implements AuthService {
     private final RoleMapper roleMapper;
     private final UserRoleMapper userRoleMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @Override
     public Long register(UserRegisterRequest request) {
@@ -64,5 +74,19 @@ public class AuthServiceImpl implements AuthService {
         userRoleMapper.insert(user.getId(), defaultRole.getId());
 
         return user.getId();
+    }
+
+    @Override
+    public String login(UserLoginRequest request) {
+        Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
+                request.getUsername(),
+                request.getPassword()
+        );
+
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        return jwtUtil.generateToken(userDetails.getId());
     }
 }
