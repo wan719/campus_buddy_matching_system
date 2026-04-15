@@ -45,15 +45,19 @@ public class AuthController {
 
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
-        String token = authService.login(request);
+        try {
+            String token = authService.login(request);
 
-        LoginResponse response = LoginResponse.builder()
-                .token(token)
-                .type("Bearer")
-                .username(request.getUsername())
-                .build();
+            LoginResponse response = LoginResponse.builder()
+                    .token(token)
+                    .type("Bearer")
+                    .username(request.getUsername())
+                    .build();
 
-        return ApiResponse.success("登录成功", response);
+            return ApiResponse.success("登录成功", response);
+        } catch (org.springframework.security.authentication.BadCredentialsException e) {
+            return ApiResponse.error(401, "用户名或密码错误");
+        }
     }
 
     /**
@@ -66,8 +70,7 @@ public class AuthController {
     })
     @GetMapping("/me")
     public ApiResponse<UserResponse> getCurrentUser(
-            @Parameter(description = "当前用户ID，可选；不传默认取1")
-            @RequestHeader(value = "userId", required = false) Long userId) {
+            @Parameter(description = "当前用户ID，可选；不传默认取1") @RequestHeader(value = "userId", required = false) Long userId) {
         return ApiResponse.success("查询成功", userService.getCurrentUser(userId));
     }
 }
