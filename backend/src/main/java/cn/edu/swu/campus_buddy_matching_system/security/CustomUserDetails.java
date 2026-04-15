@@ -8,7 +8,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +35,7 @@ public class CustomUserDetails implements UserDetails {
         if (user.getRoles() != null) {
             for (Role role : user.getRoles()) {
                 if (role.getName() != null && !role.getName().isBlank()) {
-                    authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+                    authorities.add(new SimpleGrantedAuthority(role.getName()));
                 }
 
                 if (role.getPermissions() != null) {

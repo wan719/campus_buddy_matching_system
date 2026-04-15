@@ -10,6 +10,7 @@ import cn.edu.swu.campus_buddy_matching_system.mapper.UserRoleMapper;
 import cn.edu.swu.campus_buddy_matching_system.model.entity.Role;
 import cn.edu.swu.campus_buddy_matching_system.model.entity.User;
 import cn.edu.swu.campus_buddy_matching_system.security.CustomUserDetails;
+import cn.edu.swu.campus_buddy_matching_system.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRoleMapper userRoleMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public Long register(UserRegisterRequest request) {
@@ -80,13 +81,11 @@ public class AuthServiceImpl implements AuthService {
     public String login(UserLoginRequest request) {
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
                 request.getUsername(),
-                request.getPassword()
-        );
+                request.getPassword());
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        return jwtUtil.generateToken(userDetails.getId());
+        return jwtTokenProvider.generateToken(authentication);
     }
 }

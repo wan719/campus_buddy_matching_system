@@ -26,8 +26,8 @@ mybatis:
   type-aliases-package: cn.edu.swu.campus_buddy_matching_system.model.entity
 
 jwt:
-  secret: campus-buddy-matching-system-secret-key-2024-very-long-and-secure
-  expiration: 86400000  # 24小时，单位毫秒
+  secret: mySecretKeyForJWTTokenGenerationMustBeAtLeast256BitsLongForSecurity123
+  expiration: 86400000
 
 server:
   port: 8080
