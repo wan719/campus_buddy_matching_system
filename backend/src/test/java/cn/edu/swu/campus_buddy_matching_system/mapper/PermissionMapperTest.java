@@ -1,12 +1,11 @@
 package cn.edu.swu.campus_buddy_matching_system.mapper;
 
-import cn.edu.swu.campus_buddy_matching_system.CampusApplication;
-import cn.edu.swu.campus_buddy_matching_system.mapper.PermissionMapper;
 import cn.edu.swu.campus_buddy_matching_system.model.entity.Permission;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,8 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = CampusApplication.class)
+@MybatisTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
 @Transactional
 public class PermissionMapperTest {

@@ -1,7 +1,4 @@
 spring:
-  main:
-    allow-bean-definition-overriding: true
-  
   datasource:
     url: jdbc:mysql://localhost:3306/campus_buddy_matching_system_test?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -14,6 +11,7 @@ spring:
 
   sql:
     init:
+      # Only initialize and reset schema in test profile / test database.
       mode: always
       schema-locations: classpath:db/schema.sql
       data-locations: classpath:db/data.sql
@@ -23,9 +21,7 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  mapper-locations: 
-    - classpath:mapper/*.xml
-    - classpath*:mapper/*.xml
+  mapper-locations: classpath:mapper/*.xml
   type-aliases-package: cn.edu.swu.campus_buddy_matching_system.model.entity
 
 jwt:

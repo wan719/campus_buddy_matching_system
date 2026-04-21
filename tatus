@@ -1,0 +1,18 @@
+[33mc2e395a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/mybatis-mapper[m[33m)[m HEAD@{0}: checkout: moving from dev to feature/mybatis-mapper
+[33mb7cd578[m[33m ([m[1;31morigin/dev[m[33m, [m[1;32mdev[m[33m)[m HEAD@{1}: checkout: moving from feature/mybatis-mapper to dev
+[33mc2e395a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/mybatis-mapper[m[33m)[m HEAD@{2}: rebase (finish): returning to refs/heads/feature/mybatis-mapper
+[33mc2e395a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/mybatis-mapper[m[33m)[m HEAD@{3}: rebase (pick): 补测试，新增 3 个测试类JWT 生成与校验，登录成功 / 失败，401 / 403 / 200 的鉴权结果
+[33mfff9b1e[m HEAD@{4}: rebase (pick): 把“能登录返回 token升级成“标准 JWT 认证链”，authorities 存角色/权限新增 JWT 过滤器，让后续请求带 token 就能自动认证，不带 token 访问受保护接口返回 401"
+[33mb036a69[m HEAD@{5}: rebase (pick): 完成登录认证最小闭环用户提交用户名和密码→ Spring Security 验证→ 成功后返回 JWT
+[33m340484b[m HEAD@{6}: rebase (pick): feat: Implement role and user management services with corresponding controllers and tests
+[33mb7cd578[m[33m ([m[1;31morigin/dev[m[33m, [m[1;32mdev[m[33m)[m HEAD@{7}: rebase (start): checkout origin/dev
+[33m7c11661[m HEAD@{8}: commit: 补测试，新增 3 个测试类JWT 生成与校验，登录成功 / 失败，401 / 403 / 200 的鉴权结果
+[33mf427296[m HEAD@{9}: commit: 把“能登录返回 token升级成“标准 JWT 认证链”，authorities 存角色/权限新增 JWT 过滤器，让后续请求带 token 就能自动认证，不带 token 访问受保护接口返回 401"
+[33m025b0e0[m HEAD@{10}: commit: 完成登录认证最小闭环用户提交用户名和密码→ Spring Security 验证→ 成功后返回 JWT
+[33mcff399a[m[33m ([m[1;31morigin/feature/mybatis-mapper[m[33m)[m HEAD@{11}: reset: moving to HEAD
+[33mcff399a[m[33m ([m[1;31morigin/feature/mybatis-mapper[m[33m)[m HEAD@{12}: commit: feat: Implement role and user management services with corresponding controllers and tests
+[33mbe209e4[m HEAD@{13}: commit: 完成jdbc的controller，service的搭建和测试以及swagger文档的完善
+[33m73d50aa[m HEAD@{14}: commit: fix mybatis mapper xml and tests
+[33mb499c05[m[33m ([m[1;32mmain[m[33m)[m HEAD@{15}: checkout: moving from main to feature/mybatis-mapper
+[33mb499c05[m[33m ([m[1;32mmain[m[33m)[m HEAD@{16}: commit: Complete MyBatis implementation and passed tests
+[33m0b387b2[m HEAD@{17}: clone: from https://github.com/wan719/campus_buddy_matching_system.git
