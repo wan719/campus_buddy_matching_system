@@ -53,11 +53,11 @@ WHERE `action` = 'read';
 
 -- 插入测试用户（密码都是 password123，BCrypt 加密）
 INSERT INTO `users` (`student_id`, `username`, `password`, `email`, `nickname`, `college`, `grade`, `credit_score`, `enabled`) VALUES
-('20240001', 'admin', '$2a$10$N9qo8uLOickgx2ZMRZoMye1j50KGjM5q6jZW.UuCtGFP.VfVCWHnK', 'admin@campus.edu', '管理员', '计算机学院', 2024, 100, TRUE),
-('20240002', 'user1', '$2a$10$N9qo8uLOickgx2ZMRZoMye1j50KGjM5q6jZW.UuCtGFP.VfVCWHnK', 'user1@campus.edu', '张三', '计算机学院', 2024, 100, TRUE),
-('20240003', 'user2', '$2a$10$N9qo8uLOickgx2ZMRZoMye1j50KGjM5q6jZW.UuCtGFP.VfVCWHnK', 'user2@campus.edu', '李四', '外语学院', 2023, 95, TRUE),
-('20240004', 'guest', '$2a$10$N9qo8uLOickgx2ZMRZoMye1j50KGjM5q6jZW.UuCtGFP.VfVCWHnK', 'guest@campus.edu', '访客', NULL, NULL, 100, TRUE),
-('20240005', 'disabled', '$2a$10$N9qo8uLOickgx2ZMRZoMye1j50KGjM5q6jZW.UuCtGFP.VfVCWHnK', 'disabled@campus.edu', '禁用账号', NULL, NULL, 100, FALSE);
+('20240001', 'admin', '$2a$10$KpVnUasWTrfcz/3N6tu6jOfaCGhdEpOz7HVZpXpqs/1uYe61CqUV6', 'admin@campus.edu', '管理员', '计算机学院', 2024, 100, TRUE),
+('20240002', 'user1', '$2a$10$KpVnUasWTrfcz/3N6tu6jOfaCGhdEpOz7HVZpXpqs/1uYe61CqUV6', 'user1@campus.edu', '张三', '计算机学院', 2024, 100, TRUE),
+('20240003', 'user2', '$2a$10$KpVnUasWTrfcz/3N6tu6jOfaCGhdEpOz7HVZpXpqs/1uYe61CqUV6', 'user2@campus.edu', '李四', '外语学院', 2023, 95, TRUE),
+('20240004', 'guest', '$2a$10$KpVnUasWTrfcz/3N6tu6jOfaCGhdEpOz7HVZpXpqs/1uYe61CqUV6', 'guest@campus.edu', '访客', NULL, NULL, 100, TRUE),
+('20240005', 'disabled', '$2a$10$KpVnUasWTrfcz/3N6tu6jOfaCGhdEpOz7HVZpXpqs/1uYe61CqUV6', 'disabled@campus.edu', '禁用账号', NULL, NULL, 100, FALSE);
 
 -- 分配角色给用户
 INSERT INTO `user_role` (`user_id`, `role_id`)

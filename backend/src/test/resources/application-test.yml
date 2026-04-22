@@ -13,6 +13,7 @@ spring:
     init:
       # Only initialize and reset schema in test profile / test database.
       mode: always
+      encoding: UTF-8
       schema-locations: classpath:db/schema.sql
       data-locations: classpath:db/data.sql
       continue-on-error: true
