@@ -142,4 +142,24 @@ class SecurityIntegrationTest {
                 assertEquals("访问成功", responseJson.get("message").asText());
                 assertEquals("hello admin", responseJson.get("data").asText());
         }
+
+        @Test
+        void testAdminEndpoint_WithInvalidToken_Returns401() {
+                // 构造一个明显非法的 token
+                String invalidToken = "this.is.an.invalid.token";
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setBearerAuth(invalidToken);
+
+                HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+                ResponseEntity<String> response = restTemplate.exchange(
+                                "http://localhost:" + port + "/api/admin/hello",
+                                HttpMethod.GET,
+                                requestEntity,
+                                String.class);
+
+                // 断言返回 401
+                assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        }
 }
