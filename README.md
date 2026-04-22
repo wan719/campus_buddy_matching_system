@@ -1,46 +1,65 @@
-# 校园搭子匹配系统 2.0
+# 校园搭子匹配系统（Campus Buddy Matching System）
 
-## 项目简介
-本项目旨在帮助在校大学生找到学习、运动、吃饭等“搭子”，建立真实的校园社交连接。
+基于 Spring Boot + Spring Security + JWT + MyBatis 的校园社交匹配后端项目。
 
-## 技术栈
-- Spring Boot 4.0.4
-- Spring Security + JWT
+## 仓库结构
+
+- `backend/`：后端服务（本项目主要代码）
+- `docs/`：课程作业文档与设计资料
+
+## 后端技术栈
+
+- Java 17
+- Spring Boot 3.1.5
+- Spring Security
+- JWT（jjwt）
 - MyBatis
-- MySQL 8.0+
-- Gradle 9.3.1
+- MySQL 8+
+- SpringDoc OpenAPI（Swagger UI）
+- Gradle Wrapper
 
-## 文档导航
-- [系统规划](./docs/01-系统规划/)
+## 快速开始（后端）
 
-## 开发进度
-- [x] 阶段一：系统规划
-- [x] 阶段二：系统分析
-- [x] 阶段三：系统设计
-- [ ] 阶段四：系统实施
-
-## 环境配置（Windows）
-1. 已将 Gradle Wrapper 分发包地址配置为本地文件：
-   - `D:\Downloads\gradle-9.3.1-all.zip`
-2. 请确保本地 MySQL 已启动，并可使用以下账号连接：
-   - 用户名：`root`
-   - 密码：`20060719li`
-3. 运行环境数据库（启动时自动初始化）：
-   - `campus_buddy_matching_system`
-4. 测试环境数据库（测试时自动初始化）：
-   - `campus_buddy_matching_system_test`
-
-## 快速启动
 ```bash
-# 克隆项目
-git clone https://github.com/wan719/campus_buddy_matching_system.git
-
-# 进入后端目录
-cd campus_buddy_matching_system/backend
-
-# 运行项目（使用 MySQL）
+cd backend
 ./gradlew bootRun
+```
 
-# 执行测试（使用 MySQL）
+默认启动后端服务后可访问：
+
+- Swagger UI：`http://localhost:8080/swagger-ui.html`
+- OpenAPI JSON：`http://localhost:8080/v3/api-docs`
+
+## 测试
+
+```bash
+cd backend
 ./gradlew test
 ```
+
+指定测试类示例：
+
+```bash
+./gradlew test --tests cn.edu.swu.campus_buddy_matching_system.security.SwaggerIntegrationTest
+./gradlew test --tests cn.edu.swu.campus_buddy_matching_system.security.SecurityIntegrationTest
+```
+
+## 测试数据库说明
+
+测试环境默认使用 `backend/src/test/resources/application-test.yml` 中的数据源配置：
+
+- 数据库：`campus_buddy_matching_system_test`
+- 会在测试启动时自动执行 `db/schema.sql` 和 `db/data.sql`
+
+## 登录性能测试（作业用）
+
+已提供基础文件（位于 `backend/`）：
+
+- `login.json`：登录请求示例（测试账号）
+- `performance-test.md`：性能测试说明与结果模板
+- `run-ab-test.ps1`：Windows 一键执行 `ab` 基础压测脚本
+
+## 说明
+
+- 本仓库优先用于课程开发与验证，建议在本地 MySQL 环境下运行。
+- 若修改数据库账号/密码，请同步更新 `backend/src/main/resources/application.yaml` 与 `backend/src/test/resources/application-test.yml`。
