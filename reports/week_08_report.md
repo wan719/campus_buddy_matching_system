@@ -5,7 +5,7 @@
 > - 报告内容应真实反映项目进展和个人贡献
 > - 请在每周日晚 22:00 前提交至组长处，由组长汇总后提交
 > - 提交地址：在个人的GIT项目中创建一个 reports 目录，每周的报告都提交到该目录下。
-> - 提交格式：Markdown，文件名格式：`week_08_report.md`
+> - 提交格式：Markdown，文件名格式：week_08_report.md
 
 ---
 
@@ -13,15 +13,15 @@
 
 | 项目 | 内容 |
 |-----|------|
-| **报告周次** | 第 8 周 |
-| **报告日期** | 2026年04月21日 |
-| **团队名称** | 校园搭子匹配系统 2.0 |
-| **项目主题** | ☑ 其他：校园搭子匹配系统 |
-| **报告人姓名** | 黎宏 |
-| **报告人学号** | 222024321262009 |
-| **报告人角色** | □ 组长 &nbsp; ☑ 组员 |
-| **本周Git提交次数** | 15 |
-| **本周代码行数** | 约 800 行 |
+| 报告周次 | 第 8 周 |
+| 报告日期 | 2026年04月21日 |
+| 团队名称 | 校园搭子匹配系统 2.0 |
+| 项目主题 | ☑ 其他：校园搭子匹配系统 |
+| 报告人姓名 | 黎宏 |
+| 报告人学号 | 222024321262009 |
+| 报告人角色 | □ 组长 &nbsp; ☑ 组员 |
+| 本周Git提交次数 | 15 |
+| 本周代码行数 | 约 800 行 |
 
 ---
 
@@ -31,63 +31,65 @@
 
 | 任务编号 | 任务描述 | 完成度 | 负责人 | 备注 |
 |---------|---------|--------|--------|------|
-| T-8-1 | 完成 Swagger 文档集成与配置 | 100% | 黎宏 | Swagger UI 可访问 |
-| T-8-2 | 完成 OpenAPI 全局配置与 JWT 接入 | 100% | 黎宏 | 支持 Bearer Token |
+| T-8-1 | 完成 Swagger 文档集成与 UI 配置 | 100% | 黎宏 | /swagger-ui.html 可访问 |
+| T-8-2 | 完成 OpenAPI 全局配置与 JWT Bearer 接入 | 100% | 黎宏 | 支持 Authorize |
 | T-8-3 | 完成 AuthController 接口文档注解补充 | 100% | 黎宏 | login/register/me |
-| T-8-4 | 完成 DTO Swagger 注解补充 | 100% | 黎宏 | 字段说明完善 |
-| T-8-5 | 完成 SwaggerIntegrationTest | 100% | 黎宏 | 文档与UI验证通过 |
-| T-8-6 | 完成 SecurityIntegrationTest 完整覆盖 | 100% | 黎宏 | 401/403/200/invalid |
-| T-8-7 | 完成 Swagger + JWT 联调验证 | 100% | 黎宏 | 可在UI中测试接口 |
-| T-8-8 | 完成性能测试基础（ab压测） | 100% | 黎宏 | 已生成测试脚本 |
+| T-8-4 | 完成 DTO 的 @Schema 注解补齐 | 100% | 黎宏 | 字段说明完善 |
+| T-8-5 | 完成 SwaggerIntegrationTest 编写 | 100% | 黎宏 | 文档接口验证通过 |
+| T-8-6 | 完成 SecurityIntegrationTest 完整验证 | 100% | 黎宏 | 覆盖 401/403/200 |
+| T-8-7 | 完成无效 token → 401 测试补充 | 100% | 黎宏 | 安全链路完整 |
+| T-8-8 | 完成 Swagger + JWT 联调验证 | 100% | 黎宏 | UI 可直接调接口 |
 | T-8-9 | 完成 REST API 测试记录整理 | 100% | 黎宏 | 支持作业提交 |
-| T-8-10 | 修复 Swagger 与 Security 冲突问题 | 100% | 黎宏 | 接口成功放行 |
+| T-8-10 | 完成登录接口性能测试基础（ab） | 100% | 黎宏 | 已生成测试结果 |
 
 ---
 
 ### 1.2 技术实现要点
 
-#### 功能1：Swagger + OpenAPI 文档集成
+#### 功能1：Swagger 文档集成与 JWT 安全接入
 
-**实现思路**：
-- 引入 springdoc-openapi 依赖
-- 配置 `/swagger-ui.html` 访问路径
-- 编写 OpenAPI 配置类，定义 API 信息
-- 集成 JWT Bearer 安全认证
+实现思路：
 
-**关键代码片段**：
+在项目中引入 springdoc-openapi 依赖，实现接口文档自动生成  
+配置 Swagger UI 访问路径 /swagger-ui.html  
+编写 OpenAPI 配置类，定义 API 标题、版本、描述信息  
+在 OpenAPI 中配置 Bearer Token 安全方案，使 Swagger 支持 JWT 授权  
+
+关键代码片段：
+
 ```java
-@Bean
-public OpenAPI customOpenAPI() {
-    return new OpenAPI()
-            .info(new Info().title("API文档").version("1.0"))
-            .components(new Components()
-                .addSecuritySchemes("bearerAuth",
-                    new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT")));
-}
+new SecurityScheme()
+    .type(SecurityScheme.Type.HTTP)
+    .scheme("bearer")
+    .bearerFormat("JWT");
 ```
 
-**难点与解决**：
-- Swagger 被 Security 拦截 → 放行 `/swagger-ui/**` 和 `/v3/api-docs/**`
+遇到的难点及解决：
+
+难点：Swagger 页面被 Spring Security 拦截  
+解决方案：在 SecurityConfig 中放行 /swagger-ui/** 和 /v3/api-docs/**  
 
 ---
 
 #### 功能2：Swagger + JWT 联调验证
 
-**实现思路**：
-- 登录接口返回 JWT
-- Swagger UI 使用 Authorize 输入 token
-- 请求自动携带 Authorization 头
-- 访问受保护接口验证权限
+实现思路：
 
-**关键代码片段**：
+登录接口返回 JWT Token  
+在 Swagger UI 中通过 Authorize 输入 token  
+请求自动携带 Authorization: Bearer xxx  
+调用受保护接口验证权限控制是否生效  
+
+关键代码片段：
+
 ```java
 headers.setBearerAuth(token);
 ```
 
-**难点与解决**：
-- token 未生效 → 修正 Bearer 前缀问题
+遇到的难点及解决：
+
+难点：Swagger 未正确携带 token  
+解决方案：确认 Bearer 前缀格式，并统一接口认证方式  
 
 ---
 
@@ -95,19 +97,39 @@ headers.setBearerAuth(token);
 
 ### 2.1 本周学到的技术知识点
 
-1. Swagger/OpenAPI 集成（☑ 掌握）
-2. JWT 与 Swagger 联调（☑ 掌握）
-3. Spring Security 与文档系统协同（☑ 熟悉）
-4. 接口自动化测试设计（☑ 熟悉）
+Swagger/OpenAPI 集成机制  
+学习场景：在实现接口文档自动生成与 UI 调试时  
+掌握程度：☑ 掌握  
+学习心得：理解了接口文档不仅是说明文档，还可以作为调试工具直接参与开发流程  
+
+Swagger 与 JWT 联调机制  
+学习场景：在 Swagger UI 中完成登录与授权流程  
+掌握程度：☑ 掌握  
+学习心得：理解了 Swagger 如何通过 SecurityScheme 自动注入 Authorization 请求头  
+
+Spring Security 与接口文档系统协同  
+学习场景：在解决 Swagger 被拦截问题时  
+掌握程度：☑ 熟悉  
+学习心得：对过滤器链执行顺序与路径匹配规则理解更深入  
+
+接口自动化测试设计  
+学习场景：编写 SwaggerIntegrationTest 与 SecurityIntegrationTest  
+掌握程度：☑ 熟悉  
+学习心得：学会通过集成测试验证完整接口链路，而不仅是单点逻辑  
 
 ---
 
 ### 2.2 代码质量改进
 
-- [x] 规范 Swagger 注解
-- [x] 优化 Security 配置结构
-- [x] 增加自动化测试
-- [x] 统一 API 返回结构
+- [x] 遵循编码规范  
+- [x] 优化配置结构  
+- [ ] 优化数据库性能  
+- [ ] 前端优化  
+- [x] 增加测试覆盖  
+- [x] 其他：统一 Swagger 文档结构与安全配置  
+
+具体说明：  
+本周对接口文档与安全模块进行了统一整理，使 Swagger 文档结构清晰；同时补充自动化测试，验证接口行为，提高系统可维护性与可测试性。  
 
 ---
 
@@ -117,65 +139,85 @@ headers.setBearerAuth(token);
 
 | 问题编号 | 问题描述 | 影响范围 | 解决状态 | 解决方案 |
 |---------|---------|---------|---------|---------|
-| P-8-1 | Swagger UI 无法访问 | 文档模块 | ✅ | 放行路径 |
-| P-8-2 | token 无法授权 | 安全模块 | ✅ | Bearer修复 |
-| P-8-3 | Swagger 未显示接口 | 控制层 | ✅ | 补充注解 |
+| P-8-1 | Swagger UI 无法访问 | 文档模块 | ✅ 已解决 | 配置 Security 放行路径 |
+| P-8-2 | Swagger 无法授权 token | 安全模块 | ✅ 已解决 | 修正 Bearer 格式 |
+| P-8-3 | 文档未显示接口 | 控制层 | ✅ 已解决 | 补充 Swagger 注解 |
+| P-8-4 | token 无效时返回错误状态码 | 安全模块 | ✅ 已解决 | 补充 invalid token 测试 |
+| P-8-5 | 性能测试工具不熟悉 | 测试模块 | ✅ 已解决 | 学习并使用 ab 工具 |
 
 ---
 
-### 3.2 典型问题分析
+### 3.2 典型问题深度分析
 
-Swagger 被 Security 拦截是本周关键问题，通过分析过滤器链和路径匹配规则，最终通过配置放行解决。
+问题描述：  
+Swagger UI 在集成后无法访问，返回 401 Unauthorized。  
+
+问题分析：  
+由于 Spring Security 默认拦截所有请求，而 Swagger UI 路径未配置放行，导致请求被安全过滤器拦截。  
+
+解决过程：  
+确认问题来自 SecurityConfig  
+在配置中添加 Swagger 相关路径放行  
+验证 /swagger-ui.html 和 /v3/api-docs 可访问  
+
+经验总结：  
+接口文档系统与安全系统需要协同设计，必须明确哪些接口属于“公开资源”。  
 
 ---
 
 ## 四、下周工作计划
 
-| 任务编号 | 任务描述 | 优先级 |
-|---------|---------|--------|
-| T-9-1 | 优化用户信息接口 | 高 |
-| T-9-2 | 修复编码问题 | 中 |
-| T-9-3 | 完善测试覆盖率 | 中 |
+### 4.1 计划完成的任务
+
+| 任务编号 | 任务描述 | 预计完成度 | 负责人 | 优先级 |
+|---------|---------|-----------|--------|--------|
+| T-9-1 | 重构用户信息接口（基于 JWT） | 100% | 黎宏 | 高 |
+| T-9-2 | 修复编码乱码问题 | 100% | 黎宏 | 中 |
+| T-9-3 | 提高测试覆盖率 | 100% | 黎宏 | 中 |
+| T-9-4 | 完善项目文档与展示材料 | 100% | 黎宏 | 高 |
 
 ---
 
-## 五、个人贡献声明
+### 4.2 需要提前准备的知识/技术
 
-### 5.1 工作量统计
+Spring Security 获取当前用户上下文实现  
+JaCoCo 测试覆盖率工具  
 
-| 类型 | 时间 |
-|------|------|
-| 开发 | 15h |
+---
+
+## 五、个人贡献声明（重要）
+
+### 5.1 本周个人工作量统计
+
+| 工作类型 | 工作量 |
+|---------|--------|
+| 开发 | 14h |
 | 测试 | 8h |
 | 文档 | 3h |
-| 总计 | 26h |
+| 其他 | 3h |
+| 合计 | 28h |
 
 ---
 
-### 5.2 贡献亮点
+### 5.2 本周个人贡献亮点
 
-- 完整实现 Swagger + JWT 联调
-- 自动化测试全覆盖
-- 成功解决安全拦截问题
+完整实现 Swagger + JWT 联调功能  
+完成自动化测试闭环  
+成功解决 Swagger 与 Security 冲突问题  
 
 ---
 
-### 5.3 自我评价
+### 5.3 本周自我评价
 
-| 维度 | 分数 |
-|------|------|
+| 评价维度 | 分数 |
+|---------|------|
 | 代码质量 | 4 |
-| 效率 | 5 |
-| 学习 | 5 |
-| 综合 | 4 |
+| 工作效率 | 5 |
+| 学习能力 | 5 |
+| 综合评分 | 4 |
 
 ---
 
 ## 七、对课程/老师的建议
 
-建议增加 Swagger + Security 实战案例讲解。
-
----
-
-**报告人签名**：晚  
-**提交日期**：2026年04月21日
+建议增加 Swagger 与安全模块结合的完整案例讲解。
