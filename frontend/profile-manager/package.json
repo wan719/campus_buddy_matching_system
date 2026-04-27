@@ -1,0 +1,12 @@
+{
+  "name": "profile-manager",
+  "version": "1.0.0",
+  "description": "个人信息管理器",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.20.0"
+  }
+}

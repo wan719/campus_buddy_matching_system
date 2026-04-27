@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人信息管理器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>个人信息管理器</h1>
+      <p class="subtitle">Node.js 模块化开发练习</p>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>新增 / 编辑用户</h2>
+        <form id="user-form" class="user-form">
+          <input type="hidden" id="user-id" name="id">
+          <label>
+            姓名
+            <input id="name" name="name" type="text" placeholder="请输入姓名" required>
+          </label>
+          <label>
+            邮箱
+            <input id="email" name="email" type="email" placeholder="请输入邮箱" required>
+          </label>
+          <label>
+            电话
+            <input id="phone" name="phone" type="tel" placeholder="请输入电话" required>
+          </label>
+          <label>
+            简介
+            <textarea id="bio" name="bio" rows="3" placeholder="请输入个人简介" required></textarea>
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submit-btn">添加用户</button>
+            <button type="button" class="btn" id="cancel-edit-btn">取消编辑</button>
+            <button type="button" class="btn btn-danger" id="reset-data-btn">重置数据</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>用户列表</h2>
+        <div id="notification"></div>
+        <div id="user-list" class="user-list">
+          <!-- 用户卡片将在这里动态渲染 -->
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2024 前端开发课程作业</p>
+    </footer>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
